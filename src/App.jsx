@@ -5,6 +5,7 @@ function App() {
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
   const [expenses, setExpenses] = useState([]);
+  const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,6 +53,8 @@ function App() {
           </li>
         ))}
       </ul>
+      
+      <h3>Total: ${total}</h3>
 
     </div>
   );
