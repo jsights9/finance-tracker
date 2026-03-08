@@ -4,7 +4,10 @@ function App() {
 
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
-  const [expenses, setExpenses] = useState([]);
+  const [expenses, setExpenses] = useState(() => {
+    const saved = localStorage.getItem("expenses");
+    return saved ? JSON.parse(saved) : [];
+  });
   const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
 
   const handleSubmit = (e) => {
@@ -16,6 +19,7 @@ function App() {
     };
 
     setExpenses([...expenses, newExpense]);
+    localStorage.setItem("expenses", JSON.stringify([...expenses, newExpense]));
 
     setExpenseName("");
     setAmount("");
