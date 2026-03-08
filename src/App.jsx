@@ -26,7 +26,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Finance Tracker</h1>
       <p>Track your income and expenses.</p>
 
