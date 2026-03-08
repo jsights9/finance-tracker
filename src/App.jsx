@@ -4,10 +4,20 @@ function App() {
 
   const [expenseName, setExpenseName] = useState("");
   const [amount, setAmount] = useState("");
+  const [expenses, setExpenses] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Expense:", expenseName, "Amount:", amount);
+
+    const newExpense = {
+      name: expenseName,
+      amount: amount
+    };
+
+    setExpenses([...expenses, newExpense]);
+
+    setExpenseName("");
+    setAmount("");
   };
 
   return (
@@ -32,6 +42,16 @@ function App() {
 
         <button type="submit">Add Expense</button>
       </form>
+
+      <h2>Expenses</h2>
+
+      <ul>
+        {expenses.map((expense, index) => (
+          <li key={index}>
+            {expense.name} - ${expense.amount}
+          </li>
+        ))}
+      </ul>
 
     </div>
   );
