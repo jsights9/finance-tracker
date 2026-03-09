@@ -46,6 +46,18 @@ function App() {
     setAmount("");
     setCategory("");
   };
+  // remove an expense from the list
+  const deleteExpense = (indexToDelete) => {
+
+    const updatedExpenses = expenses.filter(
+      (_, index) => index !== indexToDelete
+    );
+  
+    setExpenses(updatedExpenses);
+  
+    // update localStorage after deleting
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
+  };
 
   return (
     <div className="container">
@@ -95,6 +107,9 @@ function App() {
         {expenses.map((expense, index) => (
           <li key={index}>
             {expense.name} - ${expense.amount} - {expense.category}
+            <button onClick={() => deleteExpense(index)}>
+              Delete
+            </button>
           </li>
         ))}
       </ul>
