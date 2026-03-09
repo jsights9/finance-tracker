@@ -22,6 +22,19 @@ function App() {
     (sum, expense) => sum + Number(expense.amount),
     0
   );
+  
+  // calculate totals by category
+const categoryTotals = expenses.reduce((totals, expense) => {
+
+  if (!totals[expense.category]) {
+    totals[expense.category] = 0;
+  }
+
+  totals[expense.category] += Number(expense.amount);
+
+  return totals;
+
+}, {});
 
   // handles the form submission
   const handleSubmit = (e) => {
@@ -101,6 +114,7 @@ function App() {
       </form>
 
       <h2>Expenses</h2>
+      
 
       {/* list of expenses */}
       <ul>
@@ -115,6 +129,16 @@ function App() {
       </ul>
 
       {/* total spending */}
+      <h3>Total: ${total}</h3>
+      <h2>Spending by Category</h2>
+
+      <ul>
+        {Object.entries(categoryTotals).map(([category, amount]) => (
+        <li key={category}>
+          {category}: ${amount}
+        </li>
+  ))}
+    </ul>
       <h3>Total: ${total}</h3>
 
     </div>
