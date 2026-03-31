@@ -71,7 +71,11 @@ const categoryTotals = expenses.reduce((totals, expense) => {
     // update localStorage after deleting
     localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
-
+// clear all expenses
+const clearExpenses = () => {
+  setExpenses([]);
+  localStorage.removeItem("expenses");
+};
   return (
     <div className="container">
 
@@ -130,6 +134,9 @@ const categoryTotals = expenses.reduce((totals, expense) => {
 
       {/* total spending */}
       <h3>Total: ${total}</h3>
+      <button onClick={clearExpenses}>
+  Clear All Expenses
+</button>
       <h2>Spending by Category</h2>
 
       <ul>
