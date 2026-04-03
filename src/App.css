@@ -1,42 +1,115 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* ===== Global Styles ===== */
+
+body {
+  background: linear-gradient(to right, #f9fafb, #eef2f7);
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== Main Container ===== */
+
+.container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
   text-align: center;
+
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* ===== Headings ===== */
+
+h1 {
+  margin-bottom: 5px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+h2 {
+  margin-top: 25px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+h3 {
+  margin-top: 20px;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  font-weight: bold;
 }
 
-.card {
-  padding: 2em;
+/* ===== Inputs & Select ===== */
+
+input,
+select {
+  padding: 8px;
+  margin: 8px 0;
+  width: 90%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
-.read-the-docs {
-  color: #888;
+/* ===== Buttons ===== */
+
+button {
+  padding: 8px 12px;
+  margin: 5px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+/* Add / Update button */
+button[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+}
+
+button[type="submit"]:hover {
+  background-color: #43a047;
+}
+
+/* Delete button */
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Clear all button */
+.clear-btn {
+  background-color: #777;
+  color: white;
+}
+
+.clear-btn:hover {
+  background-color: #555;
+}
+
+/* ===== Expense List ===== */
+
+li {
+  list-style: none;
+  margin: 12px 0;
+  padding: 12px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Error Message ===== */
+
+p {
+  margin: 5px;
+  color: red;
 }

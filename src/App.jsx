@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./App.css";
 
 function App() {
 
@@ -203,7 +204,7 @@ const startEdit = (index) => {
         {expenses.map((expense, index) => (
           <li key={index}>
             {expense.name} - ${expense.amount} - {expense.category}
-            <button onClick={() => deleteExpense(index)}>
+            <button className="delete-btn" onClick={() => deleteExpense(index)}>
               Delete
             </button>
           </li>
@@ -212,7 +213,7 @@ const startEdit = (index) => {
 
       {/* total spending */}
       <h3>Total: ${total}</h3>
-      <button onClick={clearExpenses}>
+      <button className="clear-btn" onClick={clearExpenses}>
   Clear All Expenses
 </button>
       <h2>Spending by Category</h2>
