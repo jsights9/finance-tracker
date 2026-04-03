@@ -11,6 +11,12 @@ function App() {
   // state for the selected category
   const [category, setCategory] = useState("");
 
+  // state for editing categories/items
+  const [editingIndex, setEditingIndex] = useState(null);
+  
+  //state for displaying validation errors to the user
+  const [error, setError] = useState("");
+
   // load saved expenses from localStorage when the app starts
   const [expenses, setExpenses] = useState(() => {
     const saved = localStorage.getItem("expenses");
@@ -36,9 +42,49 @@ const categoryTotals = expenses.reduce((totals, expense) => {
 
 }, {});
 
+  
   // handles the form submission
   const handleSubmit = (e) => {
-    e.preventDefault(); // prevents page refresh
+  e.preventDefault(); // stop page refresh
+
+  // validation: ensure all fields are filled out
+  if (!expenseName || !amount || !category) {
+  setError("Please fill out all fields");
+  return; // stop submission if invalid
+}
+
+  // validation: ensure amount is greater than 0
+  if (Number(amount) <= 0) {
+  setError("Amount must be greater than 0");
+  return;
+}
+  
+  // clear any previous error if inputs are valid
+  setError("");
+
+  // if we are editing an existing expense
+  if (editingIndex !== null) {
+
+    // copy current expenses
+    const updatedExpenses = [...expenses];
+
+    // replace the selected expense with new values
+    updatedExpenses[editingIndex] = {
+      name: expenseName,
+      amount: amount,
+      category: category
+    };
+
+    // update state
+    setExpenses(updatedExpenses);
+
+    // update localStorage
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
+
+    // exit editing mode
+    setEditingIndex(null);
+
+  } else {
 
     // create a new expense object
     const newExpense = {
@@ -46,6 +92,22 @@ const categoryTotals = expenses.reduce((totals, expense) => {
       amount: amount,
       category: category
     };
+
+    // add it to the list
+    const updatedExpenses = [...expenses, newExpense];
+
+    // update state
+    setExpenses(updatedExpenses);
+
+    // update localStorage
+    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
+
+  }
+
+  // clear form inputs after submit
+  setExpenseName("");
+  setAmount("");
+  setCategory("");
 
     // update the expense list
     const updatedExpenses = [...expenses, newExpense];
@@ -76,12 +138,28 @@ const clearExpenses = () => {
   setExpenses([]);
   localStorage.removeItem("expenses");
 };
+const startEdit = (index) => {
+  const expense = expenses[index];
+
+  setExpenseName(expense.name);
+  setAmount(expense.amount);
+  setCategory(expense.category);
+
+  setEditingIndex(index);
+};
+
   return (
+
+    
     <div className="container">
 
       <h1>Finance Tracker</h1>
       <p>Track your income and expenses.</p>
 
+      
+      
+      {/* display validation error message if one exists */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {/* expense input form */}
       <form onSubmit={handleSubmit}>
 
