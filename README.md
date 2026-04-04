@@ -29,7 +29,14 @@ A simple and responsive finance tracking application built with React. This app 
 
 ## 📸 Screenshots
 
+### Main View
+![Main](./screenshots/main.png)
 
+### Edit Mode
+![Edit](./screenshots/edit.png)
+
+### Validation
+![Validation](./screenshots/error.png)
 
 ---
 
