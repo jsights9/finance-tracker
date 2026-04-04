@@ -12,10 +12,10 @@ function App() {
   // state for the selected category
   const [category, setCategory] = useState("");
 
-  // state for editing categories/items
+  // state to track which expense is being edited
   const [editingIndex, setEditingIndex] = useState(null);
-  
-  //state for displaying validation errors to the user
+
+  // state for displaying validation errors to the user
   const [error, setError] = useState("");
 
   // load saved expenses from localStorage when the app starts
@@ -24,147 +24,116 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // calculate total expenses using reduce
+  // calculate total expenses
   const total = expenses.reduce(
     (sum, expense) => sum + Number(expense.amount),
     0
   );
-  
+
   // calculate totals by category
-const categoryTotals = expenses.reduce((totals, expense) => {
+  const categoryTotals = expenses.reduce((totals, expense) => {
+    if (!totals[expense.category]) {
+      totals[expense.category] = 0;
+    }
+    totals[expense.category] += Number(expense.amount);
+    return totals;
+  }, {});
 
-  if (!totals[expense.category]) {
-    totals[expense.category] = 0;
-  }
-
-  totals[expense.category] += Number(expense.amount);
-
-  return totals;
-
-}, {});
-
-  
   // handles the form submission
   const handleSubmit = (e) => {
-  e.preventDefault(); // stop page refresh
+    e.preventDefault(); // stop page refresh
 
-  // validation: ensure all fields are filled out
-  if (!expenseName || !amount || !category) {
-  setError("Please fill out all fields");
-  return; // stop submission if invalid
-}
+    // validation: ensure all fields are filled out
+    if (!expenseName || !amount || !category) {
+      setError("Please fill out all fields");
+      return;
+    }
 
-  // validation: ensure amount is greater than 0
-  if (Number(amount) <= 0) {
-  setError("Amount must be greater than 0");
-  return;
-}
-  
-  // clear any previous error if inputs are valid
-  setError("");
+    // validation: ensure amount is greater than 0
+    if (Number(amount) <= 0) {
+      setError("Amount must be greater than 0");
+      return;
+    }
 
-  // if we are editing an existing expense
-  if (editingIndex !== null) {
+    // clear any previous error if inputs are valid
+    setError("");
 
-    // copy current expenses
-    const updatedExpenses = [...expenses];
+    let updatedExpenses;
 
-    // replace the selected expense with new values
-    updatedExpenses[editingIndex] = {
-      name: expenseName,
-      amount: amount,
-      category: category
-    };
+    // if editing an existing expense
+    if (editingIndex !== null) {
+      updatedExpenses = [...expenses];
 
-    // update state
+      // replace selected expense
+      updatedExpenses[editingIndex] = {
+        name: expenseName,
+        amount: Number(amount),
+        category: category
+      };
+
+      // exit editing mode
+      setEditingIndex(null);
+
+    } else {
+      // create a new expense
+      const newExpense = {
+        name: expenseName,
+        amount: Number(amount),
+        category: category
+      };
+
+      updatedExpenses = [...expenses, newExpense];
+    }
+
+    // update state + localStorage
     setExpenses(updatedExpenses);
-
-    // update localStorage
     localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
 
-    // exit editing mode
-    setEditingIndex(null);
-
-  } else {
-
-    // create a new expense object
-    const newExpense = {
-      name: expenseName,
-      amount: amount,
-      category: category
-    };
-
-    // add it to the list
-    const updatedExpenses = [...expenses, newExpense];
-
-    // update state
-    setExpenses(updatedExpenses);
-
-    // update localStorage
-    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
-
-  }
-
-  // clear form inputs after submit
-  setExpenseName("");
-  setAmount("");
-  setCategory("");
-
-    // update the expense list
-    const updatedExpenses = [...expenses, newExpense];
-    setExpenses(updatedExpenses);
-
-    // save updated expenses to localStorage
-    localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
-
-    // reset input fields after submission
+    // clear form inputs
     setExpenseName("");
     setAmount("");
     setCategory("");
   };
-  // remove an expense from the list
-  const deleteExpense = (indexToDelete) => {
 
+  // delete a single expense
+  const deleteExpense = (indexToDelete) => {
     const updatedExpenses = expenses.filter(
       (_, index) => index !== indexToDelete
     );
-  
+
     setExpenses(updatedExpenses);
-  
-    // update localStorage after deleting
     localStorage.setItem("expenses", JSON.stringify(updatedExpenses));
   };
-// clear all expenses
-const clearExpenses = () => {
-  setExpenses([]);
-  localStorage.removeItem("expenses");
-};
-const startEdit = (index) => {
-  const expense = expenses[index];
 
-  setExpenseName(expense.name);
-  setAmount(expense.amount);
-  setCategory(expense.category);
+  // clear all expenses
+  const clearExpenses = () => {
+    setExpenses([]);
+    localStorage.removeItem("expenses");
+  };
 
-  setEditingIndex(index);
-};
+  // start editing an expense
+  const startEdit = (index) => {
+    const expense = expenses[index];
+
+    setExpenseName(expense.name);
+    setAmount(expense.amount);
+    setCategory(expense.category);
+
+    setEditingIndex(index);
+  };
 
   return (
-
-    
     <div className="container">
 
       <h1>Finance Tracker</h1>
       <p>Track your income and expenses.</p>
 
-      
-      
-      {/* display validation error message if one exists */}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {/* expense input form */}
+      {/* display validation error */}
+      {error && <p>{error}</p>}
+
+      {/* expense form */}
       <form onSubmit={handleSubmit}>
 
-        {/* expense name input */}
         <input
           type="text"
           placeholder="Expense name"
@@ -172,7 +141,6 @@ const startEdit = (index) => {
           onChange={(e) => setExpenseName(e.target.value)}
         />
 
-        {/* expense amount input */}
         <input
           type="number"
           placeholder="Amount"
@@ -180,7 +148,6 @@ const startEdit = (index) => {
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        {/* category dropdown */}
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -192,40 +159,69 @@ const startEdit = (index) => {
           <option value="Entertainment">Entertainment</option>
         </select>
 
-        <button type="submit">Add Expense</button>
+        {/* dynamic button text */}
+        <button type="submit">
+          {editingIndex !== null ? "Update Expense" : "Add Expense"}
+        </button>
+
+        {/* cancel edit button */}
+        {editingIndex !== null && (
+          <button
+            type="button"
+            onClick={() => {
+              setEditingIndex(null);
+              setExpenseName("");
+              setAmount("");
+              setCategory("");
+            }}
+          >
+            Cancel
+          </button>
+        )}
 
       </form>
 
       <h2>Expenses</h2>
-      
 
-      {/* list of expenses */}
-      <ul>
-        {expenses.map((expense, index) => (
-          <li key={index}>
-            {expense.name} - ${expense.amount} - {expense.category}
-            <button className="delete-btn" onClick={() => deleteExpense(index)}>
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* empty state */}
+      {expenses.length === 0 ? (
+        <p>No expenses yet</p>
+      ) : (
+        <ul>
+          {expenses.map((expense, index) => (
+            <li key={index}>
+              {expense.name} - ${expense.amount} - {expense.category}
 
-      {/* total spending */}
+              <button onClick={() => startEdit(index)}>
+                Edit
+              </button>
+
+              <button
+                className="delete-btn"
+                onClick={() => deleteExpense(index)}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <h3>Total: ${total}</h3>
+
       <button className="clear-btn" onClick={clearExpenses}>
-  Clear All Expenses
-</button>
+        Clear All Expenses
+      </button>
+
       <h2>Spending by Category</h2>
 
       <ul>
-        {Object.entries(categoryTotals).map(([category, amount]) => (
-        <li key={category}>
-          {category}: ${amount}
-        </li>
-  ))}
-    </ul>
-      <h3>Total: ${total}</h3>
+        {Object.entries(categoryTotals).map(([cat, amt]) => (
+          <li key={cat}>
+            {cat}: ${amt}
+          </li>
+        ))}
+      </ul>
 
     </div>
   );
